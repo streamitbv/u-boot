@@ -1,0 +1,15 @@
+if TARGET_STREAMIT_MLB400
+
+config SYS_BOARD
+	default "streamit-mlb400"
+
+config SYS_VENDOR
+	default "streamit"
+
+config SYS_CONFIG_NAME
+	default "streamit-mlb400"
+
+config BOARD_SPECIFIC_OPTIONS # dummy
+	def_bool y
+
+endif

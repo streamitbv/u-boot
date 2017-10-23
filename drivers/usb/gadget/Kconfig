@@ -76,7 +76,7 @@ config CI_UDC
 
 config USB_GADGET_VBUS_DRAW
 	int "Maximum VBUS Power usage (2-500 mA)"
-	range 2 500
+	range 0 500
 	default 2
 	help
 	   Some devices need to draw power from USB when they are

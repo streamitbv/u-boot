@@ -57,6 +57,12 @@ config TARGET_FIREFLY_RK3288
 	  also includes on-board eMMC and 1GB of SDRAM. Expansion connectors
 	  provide access to display pins, I2C, SPI, UART and GPIOs.
 
+config TARGET_STREAMIT_MLB400
+    bool "Streamit-MLB400"
+    select BOARD_LATE_INIT
+    help
+        Streamits MLB400 development board product
+
 config TARGET_MIQI_RK3288
 	bool "MiQi-RK3288"
 	select BOARD_LATE_INIT
@@ -140,6 +146,8 @@ config ROCKCHIP_SPL
 source "board/chipspark/popmetal_rk3288/Kconfig"
 
 source "board/firefly/firefly-rk3288/Kconfig"
+
+source "board/streamit/streamit-mlb400/Kconfig"
 
 source "board/google/veyron/Kconfig"
 
