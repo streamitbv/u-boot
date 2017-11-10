@@ -11,18 +11,18 @@
 #ifndef CONFIG_SPL_BUILD
 #include <config_distro_defaults.h>
 
-/* First try to boot from SD (index 0), then eMMC (index 1 */
+/* First try to boot from SD (index 1), then eMMC (index 0 */
 #ifdef CONFIG_CMD_USB
 #define BOOT_TARGET_DEVICES(func) \
-	func(MMC, mmc, 0) \
 	func(MMC, mmc, 1) \
+	func(MMC, mmc, 0) \
 	func(USB, usb, 0) \
 	func(PXE, pxe, na) \
 	func(DHCP, dchp, na)
 #else
 #define BOOT_TARGET_DEVICES(func) \
-	func(MMC, mmc, 0) \
 	func(MMC, mmc, 1) \
+	func(MMC, mmc, 0) \
 	func(PXE, pxe, na) \
 	func(DHCP, dchp, na)
 #endif
