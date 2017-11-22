@@ -141,10 +141,11 @@ int get_mac_address_from_mmc(uint8_t *target) {
     }
     uint8_t enet_addr_size = 6;
     uint8_t read_buffer[512];
-    // 8192 is the first block from the RESERVED2 partition
-    ulong blks = blk_dread(mmc, 8192, 1, read_buffer);
+    // 8064 is the first block from the RESERVED1 partition
+    ulong blks = blk_dread(mmc, 8064, 1, read_buffer);
     if (blks != 1) {
         printf("mac: Could not read from mmc device\n");
+        return 0;
     }
     // Arbitrary header bytes
     if (read_buffer[0] == 0x20 && read_buffer[1] == 0x17) {
@@ -155,7 +156,7 @@ int get_mac_address_from_mmc(uint8_t *target) {
         return 1;
     }
     else {
-        printf("mac: Did not find eth mac address on RESERVED2 partition\n");
+        printf("mac: Did not find eth mac address on RESERVED1 partition\n");
         printf("Header: %d %d\n", read_buffer[0], read_buffer[1]);
         return 0;
     }
