@@ -6,7 +6,8 @@
 
 #include <common.h>
 #include <asm/gpio.h>
-#include <spl.h>
+#include <netdev.h>
+#include <part.h>
 
 #define LONE_PRESS_TIME		1500//ms
 #define KEY_LONG_PRESS		-1
@@ -132,8 +133,51 @@ void key_init(void)
 	RecoveryKeyInit();
 }
 
+int get_mac_address_from_mmc(uint8_t *target) {
+    struct blk_desc *mmc = blk_get_dev("mmc", 0);
+    if (!mmc) {
+        printf("mac: Could not access mmc device\n");
+        return 0;
+    }
+    uint8_t enet_addr_size = 6;
+    uint8_t read_buffer[512];
+    // 8064 is the first block from the RESERVED1 partition
+    ulong blks = blk_dread(mmc, 8064, 1, read_buffer);
+    if (blks != 1) {
+        printf("mac: Could not read from mmc device\n");
+        return 0;
+    }
+    // Arbitrary header bytes
+    if (read_buffer[0] == 0x20 && read_buffer[1] == 0x17) {
+        memcpy(target, &read_buffer[2], enet_addr_size);
+            printf("Using mac address: %x:%x:%x:%x:%x:%x\n",
+            target[0], target[1], target[2], target[3],
+             target[4], target[5]);
+        return 1;
+    }
+    else {
+        printf("mac: Did not find eth mac address on RESERVED1 partition\n");
+        printf("Header: %d %d\n", read_buffer[0], read_buffer[1]);
+        return 0;
+    }
+}
+
+int use_mmc_mac_address() {
+    uint8_t ethaddr[6];
+    if (!get_mac_address_from_mmc(ethaddr)) {
+        return 0;
+    }
+    if (!is_valid_ethaddr(ethaddr)) {
+        printf("mac: Invalid mac address loaded from mmc\n");
+        return 0;
+    }
+    eth_setenv_enetaddr("ethaddr", ethaddr);
+    return 1;
+}
+
 int rk_board_late_init(void) {
-	key_init();
+    use_mmc_mac_address();
+    key_init();
     if (GetPortState(&key_recovery)) {
 		setenv("preboot", "setenv preboot; rockusb 0 mmc 0");
     }
